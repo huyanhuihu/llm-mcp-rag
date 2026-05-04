@@ -1,0 +1,2 @@
+参考项目：https://github.com/KelvinQiu802/llm-mcp-rag
+参考视频：https://www.bilibili.com/video/BV1dcRqYuECf/?buvid=XU8B949820D7D9F36B004117E0A9D791B0F35&from_spmid=main.my-history.0.0&is_story_h5=false&mid=tVoWgIx6NkuTPoT9w81hfw%3D%3D&plat_id=114&share_from=ugc&share_medium=android&share_plat=android&share_session_id=06f74510-2ff6-4d5f-a4d3-a7e797126f73&share_source=WEIXIN&share_tag=s_i&spmid=united.player-video-detail.0.0&timestamp=1777796593&unique_k=LIuRMzd&up_id=38563775&vd_source=981c575c2c198a33bb9e35bf97cb5d04
