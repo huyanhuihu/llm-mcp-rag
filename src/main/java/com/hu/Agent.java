@@ -164,7 +164,7 @@ public class Agent {
         Agent agent = new Agent("deepseek-v4-flash", mcpClients, "", context);
         agent.init();
 
-        // String response = agent.invoke("爬取https://tech.sina.com.cn/news/的内容，并且总结后保存" + path + "的news.md文件中");
+        // String response = agent.invoke("爬取https://tech.sina.com.cn/news/的内容，并且总结后保存" + path + "/news 的news.md文件中");
 //        String response = agent
 //            .invoke("爬取https://jsonplaceholder.typicode.com/users的内容，在" + path + "/knowledge 中，每个人创建一个md文件，保存基本信息");
 
