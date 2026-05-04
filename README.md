@@ -86,13 +86,21 @@ ChatDeepSeekAI类
 
 
 
+#### 实验：
+
+与大模型通信成功，获取返回信息
+
 ### 大模型调用工具（LLM + MCP）
 
 #### 1 配置MCP依赖
 
 pom引入io.modelcontextprotocol.sdk相关包
 
-#### 2 本地安装mcp_server_fetch工具
+#### 2 本地安装工具
+
+##### mcp_server_fetch工具
+
+参考文档：https://github.com/modelcontextprotocol/servers/tree/main/src/fetch
 
 ```
 // 工具安装
@@ -102,13 +110,17 @@ pip install mcp_server_fetch
 python -m mcp_server_fetch
 ```
 
-server-filesystem工具无需安装，windows可由下面命令直接执行
+![image-20260504192010959](README.assets/image-20260504192010959.png)
+
+##### server-filesystem工具
+
+无需安装，windows可由下面命令直接执行，参考文档：https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem
 
 ```
 cmd /c npx -y @modelcontextprotocol/server-filesystem
 ```
 
-
+![image-20260504191951375](README.assets/image-20260504191951375.png)
 
 #### 3 模拟MCP工具调用
 
@@ -136,7 +148,7 @@ Agent类
 1. deepseek仅支持部分mcp参数，因此对于从Fetch MCP和Filesystem MCP读取的参数需要进行过滤（SchemaCleaner实现）
 2. 工具调用信息需要添加到assistant角色和tool角色的上下文信息，并且注意格式转换
 
-实验：
+#### 实验：
 
 1. 爬取https://tech.sina.com.cn/news/的新闻内容，在本地生成新闻总结文档
 2. 爬取https://jsonplaceholder.typicode.com/users的用户信息，本地为每个人创建基本信息文档
@@ -197,4 +209,6 @@ Agent类
 
 
 
-实验：在已有用户基本信息文档基础上，根据Kurtis-Weissnat的信息，创作一个她的故事保存到本地文件，要求生成文件包含基本信息和故事
+#### 实验：
+
+在已有用户基本信息文档基础上，根据Kurtis-Weissnat的信息，创作一个她的故事保存到本地文件，要求生成文件包含基本信息和故事
