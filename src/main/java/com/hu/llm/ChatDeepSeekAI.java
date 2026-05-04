@@ -1,8 +1,8 @@
 package com.hu.llm;
 
 import com.google.gson.Gson;
-import com.hu.llm.confiig.PropertyConfig;
-import com.hu.llm.util.LogUtil;
+import com.hu.confiig.PropertyConfig;
+import com.hu.util.LogUtil;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * deepseek模型通信逻辑
+ */
 public class ChatDeepSeekAI {
     private static final Gson gson = new Gson();
 
@@ -45,11 +48,14 @@ public class ChatDeepSeekAI {
 
     public Pair<String, List<DeepSeekResponse.ToolWrapper>> chat(String prompt) throws UnirestException {
         LogUtil.logTitle("CHAT");
+        // 拼接大模型请求参数
         if (!StringUtils.isEmpty(prompt)) {
             messages.add(DeepSeekRequest.Message.builder().role("user").content(prompt).build());
         }
 
         DeepSeekRequest request = DeepSeekRequest.builder().model(modelName).messages(messages).tools(tools).build();
+
+        // 请求大模型接口
         Unirest.setTimeouts(0, 0);
         HttpResponse<String> response = Unirest.post(propertyConfig.getDeepSeekUrl()).header("Content-Type", "application/json")
             .header("Accept", "application/json").header("Authorization", "Bearer " + propertyConfig.getDeepSeekKey())
@@ -60,6 +66,8 @@ public class ChatDeepSeekAI {
         StringBuilder content = new StringBuilder();
         StringBuilder reasoning_content = new StringBuilder();
         List<DeepSeekResponse.ToolWrapper> toolCalls = new ArrayList<>();
+
+        // 处理大模型响应信息
         for (DeepSeekResponse.Choice choice : deepSeekResponse.getChoices()) {
             DeepSeekResponse.Message message = choice.getMessage();
             // 处理content

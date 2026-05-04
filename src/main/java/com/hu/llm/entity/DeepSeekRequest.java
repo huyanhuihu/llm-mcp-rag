@@ -6,6 +6,9 @@ import lombok.Data;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * deepseek请求模型
+ */
 @Data
 @Builder
 public class DeepSeekRequest {

@@ -6,6 +6,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 模拟文档嵌入后数据存储与检索
+ */
 @Data
 public class VectorStore {
     private List<VectorStoreItem> vectorStore = new ArrayList<>();

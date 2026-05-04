@@ -1,7 +1,7 @@
 package com.hu.rag;
 
 import com.google.gson.Gson;
-import com.hu.llm.confiig.PropertyConfig;
+import com.hu.confiig.PropertyConfig;
 import com.hu.rag.entity.EmbeddingRequest;
 import com.hu.rag.entity.EmbeddingResponse;
 import com.mashape.unirest.http.HttpResponse;
@@ -12,6 +12,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 硅基流动模型通信逻辑
+ */
 public class EmbeddingRetrieve {
 
     private static final Gson gson = new Gson();

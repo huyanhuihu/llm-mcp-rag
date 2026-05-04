@@ -9,6 +9,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * deepseek不支持字段清理，否则接口传入后会报错400
+ */
 public class SchemaCleaner {
 
     private static final Gson GSON = new GsonBuilder().create();

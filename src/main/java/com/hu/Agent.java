@@ -5,7 +5,7 @@ import com.hu.llm.ChatDeepSeekAI;
 import com.hu.llm.entity.DeepSeekRequest;
 import com.hu.llm.entity.DeepSeekResponse;
 import com.hu.llm.entity.SchemaCleaner;
-import com.hu.llm.util.LogUtil;
+import com.hu.util.LogUtil;
 import com.hu.mcp.MCPClient;
 import com.hu.rag.EmbeddingRetrieve;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -21,6 +21,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * 主体请求入口
+ */
 public class Agent {
 
     private static final Gson gson = new Gson();
@@ -72,6 +75,12 @@ public class Agent {
         }
     }
 
+    /**
+     * 模型调用入口
+     * @param prompt 提示语
+     * @return 模型结果
+     * @throws UnirestException 接口调用异常
+     */
     public String invoke(String prompt) throws UnirestException {
         if (Objects.isNull(this.llm)) {
             throw new RuntimeException("LLM not initialized.");
@@ -79,6 +88,7 @@ public class Agent {
         Pair<String, List<DeepSeekResponse.ToolWrapper>> response = this.llm.chat(prompt);
         while (true) {
             if (!CollectionUtils.isEmpty(response.getRight())) {
+                // 模型返回工具调用非空，持续调用工具
                 for (DeepSeekResponse.ToolWrapper toolWrapper : response.getRight()) {
                     MCPClient client = null;
                     for (MCPClient mcpClient : mcpClientList) {
@@ -95,39 +105,47 @@ public class Agent {
                             break;
                         }
                     }
+                    // 判断大模型返回工具调用是否合法（mcp是否存在该工具）
                     if (Objects.nonNull(client)) {
                         String toolName = toolWrapper.getFunction().getName();
                         String arguments = toolWrapper.getFunction().getArguments();
                         LogUtil.logTitle("TOOL USE" + toolName);
                         System.out.println("Calling tool: " + toolName);
                         System.out.println("Calling arguments: " + arguments);
+
+                        // 执行本地工具调用
                         McpSchema.CallToolResult callToolResult =
                             client.callTool(toolName, gson.fromJson(arguments, Map.class));
                         System.out.println("Result: " + gson.toJson(callToolResult));
+
+                        // 工具调用结果添加到上下文信息
                         this.llm.appendToolResult(toolWrapper.getId(), gson.toJson(callToolResult.content()));
                     } else {
+                        // 工具不存在时添加失败上下文信息
                         this.llm.appendToolResult(toolWrapper.getId(), "Tool not found");
                     }
                 }
                 response = this.llm.chat("");
                 continue;
             }
+            // 模型返回不存在工具调用时结束循环
             this.close();
             return response.getKey();
         }
     }
 
     public static void main(String[] args) throws UnirestException {
+        // 1 mcp配置
         ArrayList<String> fetchMCPArguments = new ArrayList<>();
         fetchMCPArguments.add("-m");
-        fetchMCPArguments.add("mcp_server_fetch");
+        fetchMCPArguments.add("mcp_server_fetch");  // mcp工具，可以获取指定网址内容
         MCPClient fetchMCP = new MCPClient("python", fetchMCPArguments);
 
         ArrayList<String> fileMCPArguments = new ArrayList<>();
         fileMCPArguments.add("/c");
         fileMCPArguments.add("npx");
         fileMCPArguments.add("-y");
-        fileMCPArguments.add("@modelcontextprotocol/server-filesystem");
+        fileMCPArguments.add("@modelcontextprotocol/server-filesystem");  // mcp工具，可以操作本地文件
         ApplicationHome applicationHome = new ApplicationHome(Agent.class);
         String path = applicationHome.getDir().getAbsolutePath();
         fileMCPArguments.add(path);
@@ -137,14 +155,20 @@ public class Agent {
         mcpClients.add(fetchMCP);
         mcpClients.add(fileMCP);
 
-        String prompt = "根据Kurtis-Weissnat的信息，创作一个她的故事保存到" + path + "/Kurtis-Weissnat.md，要包含她的基本信息和故事";
+        String prompt = "根据Kurtis-Weissnat的信息，创作一个她的故事保存到" + path + "/story/Kurtis-Weissnat.md，要包含她的基本信息和故事";
+
+        // 2 使用rag生成向量映射，并获取提示词相关数据
         String context = retrieveContext(prompt);
+
+        // 3 初始化大模型，配置mcp和上下文信息（rag生成）
         Agent agent = new Agent("deepseek-v4-flash", mcpClients, "", context);
         agent.init();
 
         // String response = agent.invoke("爬取https://tech.sina.com.cn/news/的内容，并且总结后保存" + path + "的news.md文件中");
 //        String response = agent
 //            .invoke("爬取https://jsonplaceholder.typicode.com/users的内容，在" + path + "/knowledge 中，每个人创建一个md文件，保存基本信息");
+
+        // 4 大模型调用，打印返回结果
         String response = agent.invoke(prompt);
         System.out.println(response);
     }

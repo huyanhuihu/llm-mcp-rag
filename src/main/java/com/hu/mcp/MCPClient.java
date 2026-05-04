@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
+/**
+ * mcp工具通信逻辑
+ */
 public class MCPClient {
     private McpSyncClient mcpSyncClient;
 
@@ -58,7 +60,6 @@ public class MCPClient {
             System.out.println("Connect to server with tools: "
                     + this.tools.stream().map(McpSchema.Tool::name).collect(Collectors.joining(", ")));
         } catch (Exception e) {
-            log.error("Fail to connect to MCP server: ", e);
             throw e;
         }
     }

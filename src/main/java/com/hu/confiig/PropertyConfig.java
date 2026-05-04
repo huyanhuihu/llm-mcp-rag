@@ -1,4 +1,4 @@
-package com.hu.llm.confiig;
+package com.hu.confiig;
 
 import org.springframework.boot.system.ApplicationHome;
 
@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * 读取配置文件
+ */
 public class PropertyConfig {
     private Properties properties = new Properties();
     public void init() {

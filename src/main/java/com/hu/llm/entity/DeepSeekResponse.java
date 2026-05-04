@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * deepseek响应模型
+ */
 @Data
 @Builder
 public class DeepSeekResponse {
